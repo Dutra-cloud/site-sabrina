@@ -21,7 +21,7 @@ const LoginPage = () => {
     return (
         <div className="min-h-[60vh] flex items-center justify-center">
             <div className="bg-gray-900 p-8 rounded-xl border border-gray-800 w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+                <h2 className="text-2xl font-bold mb-6 text-center text-white">Login</h2>
                 {error && <div className="bg-red-500/20 text-red-400 p-3 rounded mb-4 text-sm">{error}</div>}
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
