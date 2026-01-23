@@ -1,7 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { db, storage } from '../services/firebase';
-import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { supabase } from '../services/supabase';
 
 const DataContext = createContext();
 
@@ -20,74 +18,127 @@ export const DataProvider = ({ children }) => {
     const [banner, setBanner] = useState(defaultBanner);
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Sincronizar Produtos
-    useEffect(() => {
-        const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
-            const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setProducts(productsData);
-            setLoading(false);
-        });
-        return () => unsubscribe();
-    }, []);
-
-    // Sincronizar Banner
-    useEffect(() => {
-        const unsubscribe = onSnapshot(doc(db, 'settings', 'banner'), (doc) => {
-            if (doc.exists()) {
-                setBanner(doc.data());
+    const fetchProducts = async () => {
+        try {
+            const { data, error } = await supabase.from('products').select('*').order('created_at', { ascending: false });
+            if (error) {
+                console.error('Error fetching products:', error);
+                setError(error.message);
+            } else if (data) {
+                setProducts(data);
+                setError(null);
             }
-        });
-        return () => unsubscribe();
-    }, []);
+        } catch (err) {
+            console.error('Unexpected error fetching products:', err);
+            setError(err.message);
+        }
+    };
 
-    // Sincronizar Categorias
-    useEffect(() => {
-        const unsubscribe = onSnapshot(doc(db, 'settings', 'categories'), (doc) => {
-            if (doc.exists()) {
-                setCategories(doc.data().list || []);
+    const fetchSettings = async () => {
+        try {
+            const { data: bannerData, error: bannerError } = await supabase.from('settings').select('value').eq('key', 'banner').single();
+            if (bannerError && bannerError.code !== 'PGRST116') console.error('Error fetching banner:', bannerError);
+            if (bannerData) setBanner(bannerData.value);
+
+            const { data: categoriesData, error: categoriesError } = await supabase.from('settings').select('value').eq('key', 'categories').single();
+            if (categoriesError && categoriesError.code !== 'PGRST116') console.error('Error fetching categories:', categoriesError);
+
+            if (categoriesData) {
+                setCategories(categoriesData.value.list || []);
             } else {
                 // Inicializar categorias se não existirem
-                setDoc(doc.ref, { list: ['Cadernos', 'Escrita', 'Acessórios', 'Mochilas', 'Artes'] });
+                const defaultCats = ['Cadernos', 'Escrita', 'Acessórios', 'Mochilas', 'Artes'];
+                const { error: insertError } = await supabase.from('settings').insert({ key: 'categories', value: { list: defaultCats } });
+                if (insertError) console.error('Error initializing categories:', insertError);
+                setCategories(defaultCats);
             }
-        });
-        return () => unsubscribe();
+        } catch (err) {
+            console.error('Unexpected error fetching settings:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+        fetchSettings();
+
+        // Realtime Subscription
+        const channel = supabase
+            .channel('public_changes')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => {
+                fetchProducts();
+            })
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => {
+                fetchSettings();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
     }, []);
 
     const uploadFile = async (file) => {
         if (!file) return null;
-        const storageRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
-        await uploadBytes(storageRef, file);
-        return await getDownloadURL(storageRef);
+        const fileName = `${Date.now()}_${file.name.replace(/\s/g, '_')}`;
+        const { data, error } = await supabase.storage.from('uploads').upload(fileName, file);
+
+        if (error) {
+            console.error('Erro no upload:', error);
+            throw error;
+        }
+
+        const { data: { publicUrl } } = supabase.storage.from('uploads').getPublicUrl(fileName);
+        return publicUrl;
     };
 
     const saveBanner = async (newBanner) => {
-        await setDoc(doc(db, 'settings', 'banner'), newBanner);
+        const { error } = await supabase.from('settings').upsert({ key: 'banner', value: newBanner });
+        if (error) throw error;
+        setBanner(newBanner);
     };
 
     const addProduct = async (product) => {
-        await addDoc(collection(db, 'products'), product);
+        const { id, ...productData } = product; // Remove ID temporário se existir
+        const { data, error } = await supabase.from('products').insert(productData).select().single();
+        if (error) throw error;
+        if (data) {
+            setProducts(prev => [data, ...prev]);
+        }
     };
 
     const updateProduct = async (updatedProduct) => {
         const { id, ...data } = updatedProduct;
-        await updateDoc(doc(db, 'products', id), data);
+        const { data: updatedData, error } = await supabase.from('products').update(data).eq('id', id).select().single();
+        if (error) throw error;
+        if (updatedData) {
+            setProducts(prev => prev.map(p => p.id === id ? updatedData : p));
+        }
     };
 
     const deleteProduct = async (id) => {
-        await deleteDoc(doc(db, 'products', id));
+        const { error } = await supabase.from('products').delete().eq('id', id);
+        if (error) throw error;
+        setProducts(prev => prev.filter(p => p.id !== id));
     };
 
     const addCategory = async (category) => {
         if (!categories.includes(category)) {
             const newCategories = [...categories, category];
-            await setDoc(doc(db, 'settings', 'categories'), { list: newCategories });
+            const { error } = await supabase.from('settings').upsert({ key: 'categories', value: { list: newCategories } });
+            if (error) throw error;
+            setCategories(newCategories);
         }
     };
 
     const deleteCategory = async (category) => {
         const newCategories = categories.filter(c => c !== category);
-        await setDoc(doc(db, 'settings', 'categories'), { list: newCategories });
+        const { error } = await supabase.from('settings').upsert({ key: 'categories', value: { list: newCategories } });
+        if (error) throw error;
+        setCategories(newCategories);
     };
 
     return (
@@ -96,6 +147,7 @@ export const DataProvider = ({ children }) => {
             banner,
             categories,
             loading,
+            error,
             saveBanner,
             addProduct,
             updateProduct,

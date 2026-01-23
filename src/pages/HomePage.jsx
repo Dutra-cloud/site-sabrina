@@ -4,7 +4,7 @@ import { MessageCircle } from 'lucide-react';
 import { useData } from '../context/DataContext';
 
 const HomePage = () => {
-    const { products, banner, categories } = useData();
+    const { products, banner, categories, error } = useData();
 
     return (
         <div className="space-y-12">
@@ -62,7 +62,6 @@ const HomePage = () => {
             </section>
 
             {/* Store Presentation */}
-            {/* Store Presentation */}
             <section className="relative max-w-5xl mx-auto px-6 py-12">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
                 <div className="text-center space-y-6">
@@ -75,8 +74,6 @@ const HomePage = () => {
                 </div>
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
             </section>
-
-            {/* WhatsApp CTA Section */}
 
             {/* Categories Bar */}
             <section>
@@ -107,30 +104,35 @@ const HomePage = () => {
                     <Link to="/produtos" className="text-sky-400 hover:text-sky-300">Ver todos</Link>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {products.map((product) => (
-                        <Link to={`/produto/${product.id}`} key={product.id} className="bg-[var(--bg-secondary)] rounded-xl overflow-hidden border border-[var(--border-color)] hover:border-gray-600 transition-all group block">
-                            <div className="relative aspect-square overflow-hidden bg-gray-800">
-                                <img
-                                    src={product.image}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                                />
-                                <div className="absolute bottom-4 right-4 bg-green-600 p-3 rounded-full text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 z-10">
-                                    <MessageCircle size={20} />
+                {error ? (
+                    <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-xl">
+                        <p className="font-bold">Erro ao carregar destaques:</p>
+                        <p>{error}</p>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        {products.map((product) => (
+                            <Link to={`/produto/${product.id}`} key={product.id} className="bg-[var(--bg-secondary)] rounded-xl overflow-hidden border border-[var(--border-color)] hover:border-gray-600 transition-all group block">
+                                <div className="relative aspect-square overflow-hidden bg-gray-800">
+                                    <img
+                                        src={product.image}
+                                        alt={product.name}
+                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
+                                    />
+                                    <div className="absolute bottom-4 right-4 bg-green-600 p-3 rounded-full text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 z-10">
+                                        <MessageCircle size={20} />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="p-4">
-
-                                <h3 className="font-medium text-lg mb-2 line-clamp-2 h-14 text-[var(--text-primary)]">{product.name}</h3>
-                                <p className="text-sm text-green-400 font-bold">Ver detalhes</p>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
+                                <div className="p-4">
+                                    <h3 className="font-medium text-lg mb-2 line-clamp-2 h-14 text-[var(--text-primary)]">{product.name}</h3>
+                                    <p className="text-sm text-green-400 font-bold">Ver detalhes</p>
+                                </div>
+                            </Link>
+                        ))}
+                    </div>
+                )}
             </section>
-
 
             {/* WhatsApp CTA Section */}
             <section className="max-w-6xl mx-auto px-4">

@@ -36,30 +36,41 @@ const AdminDashboard = () => {
 
     const handleProductSubmit = async (e) => {
         e.preventDefault();
-        let imageUrl = editingProduct ? editingProduct.image : newProduct.image;
+        try {
+            let imageUrl = editingProduct ? editingProduct.image : newProduct.image;
 
-        if (productFile) {
-            imageUrl = await uploadFile(productFile);
-        }
+            if (productFile) {
+                imageUrl = await uploadFile(productFile);
+            }
 
-        if (editingProduct) {
-            updateProduct({ ...editingProduct, image: imageUrl });
-            setEditingProduct(null);
-        } else {
-            addProduct({ ...newProduct, image: imageUrl || 'https://placehold.co/300x300/202020/white?text=Produto' });
-            setNewProduct({ name: '', price: '', category: '', image: '' });
+            if (editingProduct) {
+                await updateProduct({ ...editingProduct, image: imageUrl });
+                setEditingProduct(null);
+            } else {
+                await addProduct({ ...newProduct, image: imageUrl || 'https://placehold.co/300x300/202020/white?text=Produto' });
+                setNewProduct({ name: '', price: '', category: '', image: '' });
+            }
+            setProductFile(null);
+            alert('Produto salvo com sucesso!');
+        } catch (err) {
+            console.error(err);
+            alert('Erro ao salvar produto: ' + err.message);
         }
-        setProductFile(null);
     };
 
     const handleBannerSave = async () => {
-        let mediaUrl = bannerForm.media;
-        if (bannerFile) {
-            mediaUrl = await uploadFile(bannerFile);
+        try {
+            let mediaUrl = bannerForm.media;
+            if (bannerFile) {
+                mediaUrl = await uploadFile(bannerFile);
+            }
+            await saveBanner({ ...bannerForm, media: mediaUrl });
+            setBannerFile(null);
+            alert('Banner atualizado com sucesso!');
+        } catch (err) {
+            console.error(err);
+            alert('Erro ao salvar banner: ' + err.message);
         }
-        saveBanner({ ...bannerForm, media: mediaUrl });
-        setBannerFile(null);
-        alert('Banner atualizado com sucesso!');
     };
 
     return (

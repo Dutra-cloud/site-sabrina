@@ -5,7 +5,7 @@ import { useData } from '../context/DataContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const ProductsPage = () => {
-    const { products, categories } = useData();
+    const { products, categories, error } = useData();
     const location = useLocation();
     const navigate = useNavigate();
     const searchParams = new URLSearchParams(location.search);
@@ -90,8 +90,8 @@ const ProductsPage = () => {
                     <button
                         onClick={() => handleCategorySelect('')}
                         className={`px-4 py-2 rounded-full whitespace-nowrap transition-all border ${!selectedCategory
-                                ? 'bg-sky-500 border-sky-500 text-white'
-                                : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-sky-500'
+                            ? 'bg-sky-500 border-sky-500 text-white'
+                            : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-sky-500'
                             }`}
                     >
                         Todos
@@ -101,8 +101,8 @@ const ProductsPage = () => {
                             key={category}
                             onClick={() => handleCategorySelect(category)}
                             className={`px-4 py-2 rounded-full whitespace-nowrap transition-all border ${selectedCategory === category
-                                    ? 'bg-sky-500 border-sky-500 text-white'
-                                    : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-sky-500'
+                                ? 'bg-sky-500 border-sky-500 text-white'
+                                : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-sky-500'
                                 }`}
                         >
                             {category}
@@ -110,6 +110,14 @@ const ProductsPage = () => {
                     ))}
                 </div>
             </div>
+
+            {error && (
+                <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-xl mb-8">
+                    <p className="font-bold">Erro ao carregar produtos:</p>
+                    <p>{error}</p>
+                    <p className="text-sm mt-2">Verifique sua conexão com a internet ou se há algum bloqueio de rede.</p>
+                </div>
+            )}
 
             {filteredProducts.length === 0 ? (
                 <div className="text-center py-20">
