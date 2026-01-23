@@ -17,7 +17,7 @@ const Header = () => {
                 {/* Logo */}
                 <Link to="/" className={`flex items-center p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ${isLightMode ? 'bg-white' : 'bg-black'}`}>
                     <img
-                        src={isLightMode ? "/logo-light.jpg" : "/logo-dark.jpg"}
+                        src={isLightMode ? "/logo-dark.jpg" : "/logo-light.jpg"}
                         alt="Sabrina De Tudo um Pouco"
                         className="h-12 md:h-20 w-auto object-contain"
                     />
