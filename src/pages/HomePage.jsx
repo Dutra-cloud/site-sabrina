@@ -154,7 +154,7 @@ const HomePage = () => {
 
                     <div className="flex-shrink-0">
                         <a
-                            href="https://wa.me/5516999999999"
+                            href="https://wa.me/5516994322916"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-full transition-colors shadow-md hover:shadow-lg"
