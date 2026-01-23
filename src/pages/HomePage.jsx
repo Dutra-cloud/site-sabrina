@@ -9,7 +9,7 @@ const HomePage = () => {
     return (
         <div className="space-y-12">
             {/* Hero Section */}
-            <section className="relative h-[350px] md:h-[600px] rounded-3xl overflow-hidden flex items-center px-6 md:px-20 shadow-2xl">
+            <section className="relative min-h-[600px] rounded-3xl overflow-hidden flex items-center px-6 md:px-20 shadow-2xl py-20">
                 {/* Background Media or Gradient */}
                 <div className="absolute inset-0 z-0">
                     {banner.media ? (
@@ -44,7 +44,7 @@ const HomePage = () => {
                     <span className="inline-block bg-sky-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-widest uppercase animate-pulse">
                         Temporada 2026
                     </span>
-                    <h1 className="text-3xl md:text-7xl font-black mb-6 leading-tight whitespace-pre-line text-white drop-shadow-lg">
+                    <h1 className="text-4xl md:text-7xl font-black mb-6 leading-tight whitespace-pre-line text-white drop-shadow-lg">
                         {banner.title}
                     </h1>
                     <p className="text-lg md:text-2xl text-gray-100 mb-10 max-w-xl leading-relaxed drop-shadow-md">
