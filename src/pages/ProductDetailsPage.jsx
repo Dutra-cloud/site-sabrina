@@ -54,7 +54,7 @@ const ProductDetailsPage = () => {
 
                     <div className="space-y-4 pt-6">
                         <a
-                            href={`https://wa.me/5516994322916?text=Olá, gostaria de saber mais sobre o produto: ${product.name}`}
+                            href={`https://wa.me/5516994322916?text=Olá, gostaria de saber mais sobre o produto: ${product.name}. Foto: ${product.image}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center space-x-2 transition-all transform hover:scale-[1.02]"
