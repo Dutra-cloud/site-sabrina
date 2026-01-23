@@ -5,7 +5,7 @@ const ThemeContext = createContext();
 export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
-    const [isLightMode, setIsLightMode] = useState(false);
+    const [isLightMode, setIsLightMode] = useState(true);
 
     useEffect(() => {
         if (isLightMode) {
