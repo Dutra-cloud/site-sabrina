@@ -49,19 +49,19 @@ const AdminDashboard = () => {
             <div className="flex space-x-4 mb-6">
                 <button
                     onClick={() => setActiveTab('products')}
-                    className={`px-4 py-2 rounded ${activeTab === 'products' ? 'bg-sky-500' : 'bg-gray-800 hover:bg-gray-700'}`}
+                    className={`px-4 py-2 rounded text-white ${activeTab === 'products' ? 'bg-sky-500' : 'bg-gray-800 hover:bg-gray-700'}`}
                 >
                     Produtos
                 </button>
                 <button
                     onClick={() => setActiveTab('banner')}
-                    className={`px-4 py-2 rounded ${activeTab === 'banner' ? 'bg-sky-500' : 'bg-gray-800 hover:bg-gray-700'}`}
+                    className={`px-4 py-2 rounded text-white ${activeTab === 'banner' ? 'bg-sky-500' : 'bg-gray-800 hover:bg-gray-700'}`}
                 >
                     Banner
                 </button>
                 <button
                     onClick={() => setActiveTab('categories')}
-                    className={`px-4 py-2 rounded ${activeTab === 'categories' ? 'bg-sky-500' : 'bg-gray-800 hover:bg-gray-700'}`}
+                    className={`px-4 py-2 rounded text-white ${activeTab === 'categories' ? 'bg-sky-500' : 'bg-gray-800 hover:bg-gray-700'}`}
                 >
                     Categorias
                 </button>
@@ -74,10 +74,10 @@ const AdminDashboard = () => {
                     <div className="flex flex-col lg:grid lg:grid-cols-3 gap-8">
                         {/* Add/Edit Form - Order 1 on Mobile, 2 on Desktop */}
                         <div className="order-1 lg:order-2 bg-gray-900 p-6 rounded border border-gray-800 h-fit lg:sticky lg:top-24">
-                            <h2 className="text-xl font-bold mb-4">{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h2>
+                            <h2 className="text-xl font-bold mb-4 text-white">{editingProduct ? 'Editar Produto' : 'Novo Produto'}</h2>
                             <form onSubmit={handleProductSubmit} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm mb-1">Nome</label>
+                                    <label className="block text-sm mb-1 text-white">Nome</label>
                                     <input
                                         type="text"
                                         value={editingProduct ? editingProduct.name : newProduct.name}
@@ -87,7 +87,7 @@ const AdminDashboard = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm mb-1">Preço</label>
+                                    <label className="block text-sm mb-1 text-white">Preço</label>
                                     <input
                                         type="text"
                                         value={editingProduct ? editingProduct.price : newProduct.price}
@@ -96,7 +96,7 @@ const AdminDashboard = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm mb-1">Categoria</label>
+                                    <label className="block text-sm mb-1 text-white">Categoria</label>
                                     <select
                                         value={editingProduct ? editingProduct.category : newProduct.category}
                                         onChange={e => editingProduct ? setEditingProduct({ ...editingProduct, category: e.target.value }) : setNewProduct({ ...newProduct, category: e.target.value })}
@@ -107,7 +107,7 @@ const AdminDashboard = () => {
                                     </select>
                                 </div>
                                 <div>
-                                    <label className="block text-sm mb-1">Imagem do Produto</label>
+                                    <label className="block text-sm mb-1 text-white">Imagem do Produto</label>
                                     <div className="space-y-2">
                                         <input
                                             type="file"
@@ -165,7 +165,7 @@ const AdminDashboard = () => {
 
                         {/* Product List - Order 2 on Mobile, 1 on Desktop */}
                         <div className="order-2 lg:order-1 lg:col-span-2 space-y-4">
-                            <h2 className="text-xl font-bold mb-4">Lista de Produtos</h2>
+                            <h2 className="text-xl font-bold mb-4 text-white">Lista de Produtos</h2>
                             <div className="grid gap-4">
                                 {products.map(product => (
                                     <div key={product.id} className="bg-gray-900 p-4 rounded flex items-center justify-between border border-gray-800">
@@ -202,10 +202,10 @@ const AdminDashboard = () => {
             {
                 activeTab === 'banner' && (
                     <div className="max-w-2xl">
-                        <h2 className="text-xl font-bold mb-4">Editar Banner Principal</h2>
+                        <h2 className="text-xl font-bold mb-4 text-white">Editar Banner Principal</h2>
                         <div className="bg-gray-900 p-6 rounded border border-gray-800 space-y-4">
                             <div>
-                                <label className="block text-sm mb-1">Título</label>
+                                <label className="block text-sm mb-1 text-white">Título</label>
                                 <textarea
                                     value={bannerForm.title}
                                     onChange={e => setBannerForm({ ...bannerForm, title: e.target.value })}
@@ -213,7 +213,7 @@ const AdminDashboard = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm mb-1">Subtítulo</label>
+                                <label className="block text-sm mb-1 text-white">Subtítulo</label>
                                 <input
                                     type="text"
                                     value={bannerForm.subtitle}
@@ -230,7 +230,7 @@ const AdminDashboard = () => {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm mb-1">Imagem ou Vídeo de Fundo</label>
+                                <label className="block text-sm mb-1 text-white">Imagem ou Vídeo de Fundo</label>
                                 <input
                                     type="file"
                                     accept="image/*,video/*"
@@ -280,11 +280,11 @@ const AdminDashboard = () => {
             {/* Categories Tab */}
             {activeTab === 'categories' && (
                 <div className="max-w-2xl">
-                    <h2 className="text-xl font-bold mb-4">Gerenciar Categorias</h2>
+                    <h2 className="text-xl font-bold mb-4 text-white">Gerenciar Categorias</h2>
 
                     {/* Add Category */}
                     <div className="bg-gray-900 p-6 rounded border border-gray-800 mb-8">
-                        <h3 className="font-bold mb-4">Adicionar Nova Categoria</h3>
+                        <h3 className="font-bold mb-4 text-white">Adicionar Nova Categoria</h3>
                         <form
                             onSubmit={(e) => {
                                 e.preventDefault();
