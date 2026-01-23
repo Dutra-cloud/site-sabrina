@@ -6,16 +6,23 @@ import { Plus, Trash, Edit, Save, X } from 'lucide-react';
 
 const AdminDashboard = () => {
     const { user, logout } = useAuth();
-    const { products, banner, categories, saveBanner, saveCategories, addProduct, updateProduct, deleteProduct, addCategory, deleteCategory } = useData();
+    const { products, banner, categories, saveBanner, addProduct, updateProduct, deleteProduct, addCategory, deleteCategory, uploadFile } = useData();
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('products');
 
     // Product Form State
     const [editingProduct, setEditingProduct] = useState(null);
     const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', image: '' });
+    const [productFile, setProductFile] = useState(null);
 
     // Banner Form State
     const [bannerForm, setBannerForm] = useState(banner);
+    const [bannerFile, setBannerFile] = useState(null);
+
+    // Update bannerForm when banner data changes from context
+    React.useEffect(() => {
+        setBannerForm(banner);
+    }, [banner]);
 
     if (!user || user.role !== 'admin') {
         navigate('/login');
@@ -27,21 +34,38 @@ const AdminDashboard = () => {
         navigate('/');
     };
 
-    const handleProductSubmit = (e) => {
+    const handleProductSubmit = async (e) => {
         e.preventDefault();
+        let imageUrl = editingProduct ? editingProduct.image : newProduct.image;
+
+        if (productFile) {
+            imageUrl = await uploadFile(productFile);
+        }
+
         if (editingProduct) {
-            updateProduct(editingProduct);
+            updateProduct({ ...editingProduct, image: imageUrl });
             setEditingProduct(null);
         } else {
-            addProduct({ ...newProduct, image: newProduct.image || 'https://placehold.co/300x300/202020/white?text=Produto' });
+            addProduct({ ...newProduct, image: imageUrl || 'https://placehold.co/300x300/202020/white?text=Produto' });
             setNewProduct({ name: '', price: '', category: '', image: '' });
         }
+        setProductFile(null);
+    };
+
+    const handleBannerSave = async () => {
+        let mediaUrl = bannerForm.media;
+        if (bannerFile) {
+            mediaUrl = await uploadFile(bannerFile);
+        }
+        saveBanner({ ...bannerForm, media: mediaUrl });
+        setBannerFile(null);
+        alert('Banner atualizado com sucesso!');
     };
 
     return (
         <div className="space-y-8">
             <div className="flex justify-between items-center border-b border-gray-800 pb-4">
-                <h1 className="text-3xl font-bold">Painel Administrativo</h1>
+                <h1 className="text-3xl font-bold text-white">Painel Administrativo</h1>
                 <button onClick={handleLogout} className="text-red-400 hover:text-red-300">Sair</button>
             </div>
 
@@ -67,7 +91,6 @@ const AdminDashboard = () => {
                 </button>
             </div>
 
-            {/* Products Tab */}
             {/* Products Tab */}
             {
                 activeTab === 'products' && (
@@ -115,6 +138,8 @@ const AdminDashboard = () => {
                                             onChange={(e) => {
                                                 const file = e.target.files[0];
                                                 if (file) {
+                                                    setProductFile(file);
+                                                    // Preview logic
                                                     const reader = new FileReader();
                                                     reader.onloadend = () => {
                                                         if (editingProduct) {
@@ -139,6 +164,7 @@ const AdminDashboard = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => {
+                                                        setProductFile(null);
                                                         if (editingProduct) setEditingProduct({ ...editingProduct, image: '' });
                                                         else setNewProduct({ ...newProduct, image: '' });
                                                     }}
@@ -155,7 +181,7 @@ const AdminDashboard = () => {
                                         {editingProduct ? 'Salvar Alterações' : 'Adicionar Produto'}
                                     </button>
                                     {editingProduct && (
-                                        <button type="button" onClick={() => setEditingProduct(null)} className="px-4 bg-gray-700 hover:bg-gray-600 rounded text-white transition-colors">
+                                        <button type="button" onClick={() => { setEditingProduct(null); setProductFile(null); }} className="px-4 bg-gray-700 hover:bg-gray-600 rounded text-white transition-colors">
                                             <X size={20} />
                                         </button>
                                     )}
@@ -180,6 +206,7 @@ const AdminDashboard = () => {
                                             <button
                                                 onClick={() => {
                                                     setEditingProduct(product);
+                                                    setProductFile(null);
                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                 }}
                                                 className="p-2 hover:bg-blue-900 rounded text-blue-400 transition-colors"
@@ -209,7 +236,7 @@ const AdminDashboard = () => {
                                 <textarea
                                     value={bannerForm.title}
                                     onChange={e => setBannerForm({ ...bannerForm, title: e.target.value })}
-                                    className="w-full bg-black border border-gray-700 rounded p-2 h-24"
+                                    className="w-full bg-black border border-gray-700 rounded p-2 h-24 text-white"
                                 />
                             </div>
                             <div>
@@ -218,7 +245,7 @@ const AdminDashboard = () => {
                                     type="text"
                                     value={bannerForm.subtitle}
                                     onChange={e => setBannerForm({ ...bannerForm, subtitle: e.target.value })}
-                                    className="w-full bg-black border border-gray-700 rounded p-2"
+                                    className="w-full bg-black border border-gray-700 rounded p-2 text-white"
                                 />
                             </div>
                             <div>
@@ -226,7 +253,7 @@ const AdminDashboard = () => {
                                     type="text"
                                     value={bannerForm.buttonText}
                                     onChange={e => setBannerForm({ ...bannerForm, buttonText: e.target.value })}
-                                    className="w-full bg-black border border-gray-700 rounded p-2"
+                                    className="w-full bg-black border border-gray-700 rounded p-2 text-white"
                                 />
                             </div>
                             <div>
@@ -237,6 +264,8 @@ const AdminDashboard = () => {
                                     onChange={(e) => {
                                         const file = e.target.files[0];
                                         if (file) {
+                                            setBannerFile(file);
+                                            // Preview
                                             const reader = new FileReader();
                                             reader.onloadend = () => {
                                                 setBannerForm({
@@ -258,7 +287,10 @@ const AdminDashboard = () => {
                                             <img src={bannerForm.media} alt="Banner Preview" className="w-full h-48 object-cover rounded border border-gray-700" />
                                         )}
                                         <button
-                                            onClick={() => setBannerForm({ ...bannerForm, media: '', mediaType: '' })}
+                                            onClick={() => {
+                                                setBannerForm({ ...bannerForm, media: '', mediaType: '' });
+                                                setBannerFile(null);
+                                            }}
                                             className="absolute top-2 right-2 bg-red-600 p-1 rounded-full text-white hover:bg-red-700"
                                         >
                                             <Trash size={14} />
@@ -267,7 +299,7 @@ const AdminDashboard = () => {
                                 )}
                             </div>
                             <button
-                                onClick={() => saveBanner(bannerForm)}
+                                onClick={handleBannerSave}
                                 className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded flex items-center space-x-2"
                             >
                                 <Save size={18} /> <span>Salvar Alterações</span>

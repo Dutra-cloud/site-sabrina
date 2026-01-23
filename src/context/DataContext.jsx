@@ -1,17 +1,11 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { db, storage } from '../services/firebase';
+import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const DataContext = createContext();
 
 export const useData = () => useContext(DataContext);
-
-const defaultProducts = [
-    { id: 1, name: 'Caderno Universitário 10 Matérias', price: '29,90', image: 'https://placehold.co/300x300/202020/white?text=Caderno', category: 'Cadernos' },
-    { id: 2, name: 'Estojo Escolar Grande', price: '45,00', image: 'https://placehold.co/300x300/202020/white?text=Estojo', category: 'Acessórios' },
-    { id: 3, name: 'Kit Canetas Coloridas', price: '19,90', image: 'https://placehold.co/300x300/202020/white?text=Canetas', category: 'Escrita' },
-    { id: 4, name: 'Mochila Escolar Preta', price: '129,90', image: 'https://placehold.co/300x300/202020/white?text=Mochila', category: 'Mochilas' },
-    { id: 5, name: 'Lápis de Cor 24 Cores', price: '39,90', image: 'https://placehold.co/300x300/202020/white?text=Lapis+Cor', category: 'Artes' },
-    { id: 6, name: 'Agenda 2026', price: '59,90', image: 'https://placehold.co/300x300/202020/white?text=Agenda', category: 'Cadernos' },
-];
 
 const defaultBanner = {
     title: 'VOLTA ÀS AULAS\nCOM TUDO!',
@@ -21,72 +15,79 @@ const defaultBanner = {
     mediaType: 'image'
 };
 
-const defaultCategories = ['Cadernos', 'Escrita', 'Acessórios', 'Mochilas', 'Artes'];
-
 export const DataProvider = ({ children }) => {
-    const [products, setProducts] = useState(defaultProducts);
+    const [products, setProducts] = useState([]);
     const [banner, setBanner] = useState(defaultBanner);
-    const [categories, setCategories] = useState(defaultCategories);
+    const [categories, setCategories] = useState([]);
+    const [loading, setLoading] = useState(true);
 
+    // Sincronizar Produtos
     useEffect(() => {
-        const storedProducts = localStorage.getItem('products');
-        const storedBanner = localStorage.getItem('banner');
-        const storedCategories = localStorage.getItem('categories');
-
-        if (storedProducts) setProducts(JSON.parse(storedProducts));
-        if (storedBanner) {
-            const parsedBanner = JSON.parse(storedBanner);
-            // Only use stored banner if it has media (the new format)
-            if (parsedBanner.media) {
-                setBanner(parsedBanner);
-            } else {
-                // If it's the old format, clear it to use the new default
-                localStorage.removeItem('banner');
-            }
-        }
-        if (storedCategories) setCategories(JSON.parse(storedCategories));
+        const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
+            const productsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setProducts(productsData);
+            setLoading(false);
+        });
+        return () => unsubscribe();
     }, []);
 
-    const saveProducts = (newProducts) => {
-        setProducts(newProducts);
-        localStorage.setItem('products', JSON.stringify(newProducts));
+    // Sincronizar Banner
+    useEffect(() => {
+        const unsubscribe = onSnapshot(doc(db, 'settings', 'banner'), (doc) => {
+            if (doc.exists()) {
+                setBanner(doc.data());
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
+    // Sincronizar Categorias
+    useEffect(() => {
+        const unsubscribe = onSnapshot(doc(db, 'settings', 'categories'), (doc) => {
+            if (doc.exists()) {
+                setCategories(doc.data().list || []);
+            } else {
+                // Inicializar categorias se não existirem
+                setDoc(doc.ref, { list: ['Cadernos', 'Escrita', 'Acessórios', 'Mochilas', 'Artes'] });
+            }
+        });
+        return () => unsubscribe();
+    }, []);
+
+    const uploadFile = async (file) => {
+        if (!file) return null;
+        const storageRef = ref(storage, `uploads/${Date.now()}_${file.name}`);
+        await uploadBytes(storageRef, file);
+        return await getDownloadURL(storageRef);
     };
 
-    const saveBanner = (newBanner) => {
-        setBanner(newBanner);
-        localStorage.setItem('banner', JSON.stringify(newBanner));
+    const saveBanner = async (newBanner) => {
+        await setDoc(doc(db, 'settings', 'banner'), newBanner);
     };
 
-    const saveCategories = (newCategories) => {
-        setCategories(newCategories);
-        localStorage.setItem('categories', JSON.stringify(newCategories));
+    const addProduct = async (product) => {
+        await addDoc(collection(db, 'products'), product);
     };
 
-    const addProduct = (product) => {
-        const newProducts = [...products, { ...product, id: Date.now() }];
-        saveProducts(newProducts);
+    const updateProduct = async (updatedProduct) => {
+        const { id, ...data } = updatedProduct;
+        await updateDoc(doc(db, 'products', id), data);
     };
 
-    const updateProduct = (updatedProduct) => {
-        const newProducts = products.map(p => p.id === updatedProduct.id ? updatedProduct : p);
-        saveProducts(newProducts);
+    const deleteProduct = async (id) => {
+        await deleteDoc(doc(db, 'products', id));
     };
 
-    const deleteProduct = (id) => {
-        const newProducts = products.filter(p => p.id !== id);
-        saveProducts(newProducts);
-    };
-
-    const addCategory = (category) => {
+    const addCategory = async (category) => {
         if (!categories.includes(category)) {
             const newCategories = [...categories, category];
-            saveCategories(newCategories);
+            await setDoc(doc(db, 'settings', 'categories'), { list: newCategories });
         }
     };
 
-    const deleteCategory = (category) => {
+    const deleteCategory = async (category) => {
         const newCategories = categories.filter(c => c !== category);
-        saveCategories(newCategories);
+        await setDoc(doc(db, 'settings', 'categories'), { list: newCategories });
     };
 
     return (
@@ -94,13 +95,14 @@ export const DataProvider = ({ children }) => {
             products,
             banner,
             categories,
+            loading,
             saveBanner,
-            saveCategories,
             addProduct,
             updateProduct,
             deleteProduct,
             addCategory,
-            deleteCategory
+            deleteCategory,
+            uploadFile
         }}>
             {children}
         </DataContext.Provider>
