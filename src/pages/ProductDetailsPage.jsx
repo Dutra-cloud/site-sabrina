@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
 import { MessageCircle, ArrowLeft, Truck, ShieldCheck } from 'lucide-react';
@@ -7,8 +7,15 @@ const ProductDetailsPage = () => {
     const { id } = useParams();
     const { products } = useData();
     const navigate = useNavigate();
+    const [activeImage, setActiveImage] = useState('');
 
     const product = products.find(p => p.id.toString() === id);
+
+    useEffect(() => {
+        if (product) {
+            setActiveImage(product.image);
+        }
+    }, [product]);
 
     if (!product) {
         return (
@@ -24,6 +31,8 @@ const ProductDetailsPage = () => {
         );
     }
 
+    const images = product.images && product.images.length > 0 ? product.images : [product.image];
+
     return (
         <div className="container mx-auto px-4 py-8">
             <button
@@ -35,12 +44,28 @@ const ProductDetailsPage = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                 {/* Image Section */}
-                <div className="bg-[var(--bg-secondary)] rounded-2xl p-4 border border-[var(--border-color)]">
-                    <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-auto rounded-xl object-cover aspect-square"
-                    />
+                <div className="space-y-4">
+                    <div className="bg-[var(--bg-secondary)] rounded-2xl p-4 border border-[var(--border-color)]">
+                        <img
+                            src={activeImage || product.image}
+                            alt={product.name}
+                            className="w-full h-auto rounded-xl object-cover aspect-square"
+                        />
+                    </div>
+                    {/* Thumbnails */}
+                    {images.length > 1 && (
+                        <div className="grid grid-cols-5 gap-2">
+                            {images.map((img, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => setActiveImage(img)}
+                                    className={`rounded-lg overflow-hidden border-2 transition-all ${activeImage === img ? 'border-sky-500 opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                                >
+                                    <img src={img} alt={`${product.name} view ${index + 1}`} className="w-full h-full object-cover aspect-square" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* Info Section */}

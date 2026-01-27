@@ -12,8 +12,8 @@ const AdminDashboard = () => {
 
     // Product Form State
     const [editingProduct, setEditingProduct] = useState(null);
-    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', image: '', description: '' });
-    const [productFile, setProductFile] = useState(null);
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', image: '', images: [], description: '' });
+    const [productFiles, setProductFiles] = useState([]);
 
     // Banner Form State
     const [bannerForm, setBannerForm] = useState(banner);
@@ -37,18 +37,29 @@ const AdminDashboard = () => {
     const handleProductSubmit = async (e) => {
         e.preventDefault();
         try {
-            let imageUrl = editingProduct ? editingProduct.image : newProduct.image;
+            let imageUrls = editingProduct ? (editingProduct.images || [editingProduct.image]) : (newProduct.images || []);
 
-            if (productFile) {
-                imageUrl = await uploadFile(productFile);
+            // Upload new files if any
+            if (productFiles.length > 0) {
+                const uploadedUrls = await Promise.all(productFiles.map(file => uploadFile(file)));
+                imageUrls = [...imageUrls, ...uploadedUrls];
             }
 
+            // Limit to 5 images
+            if (imageUrls.length > 5) {
+                alert('Máximo de 5 imagens permitidas. As excedentes serão ignoradas.');
+                imageUrls = imageUrls.slice(0, 5);
+            }
+
+            const mainImage = imageUrls.length > 0 ? imageUrls[0] : 'https://placehold.co/300x300/202020/white?text=Produto';
+
             const productData = editingProduct ? { ...editingProduct } : { ...newProduct };
-            productData.image = imageUrl || 'https://placehold.co/300x300/202020/white?text=Produto';
-            
+            productData.image = mainImage;
+            productData.images = imageUrls;
+
             // Ensure price is a number/float
             productData.price = parseFloat(productData.price.toString().replace(',', '.'));
-            
+
             if (isNaN(productData.price)) {
                 throw new Error("O preço deve ser um número válido.");
             }
@@ -58,9 +69,9 @@ const AdminDashboard = () => {
                 setEditingProduct(null);
             } else {
                 await addProduct(productData);
-                setNewProduct({ name: '', price: '', category: '', image: '', description: '' });
+                setNewProduct({ name: '', price: '', category: '', image: '', images: [], description: '' });
             }
-            setProductFile(null);
+            setProductFiles([]);
             alert('Produto salvo com sucesso!');
         } catch (err) {
             console.error(err);
@@ -159,48 +170,58 @@ const AdminDashboard = () => {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm mb-1 text-white">Imagem do Produto</label>
+                                    <label className="block text-sm mb-1 text-white">Imagens do Produto (Máx 5)</label>
                                     <div className="space-y-2">
                                         <input
                                             type="file"
                                             accept="image/*"
+                                            multiple
                                             onChange={(e) => {
-                                                const file = e.target.files[0];
-                                                if (file) {
-                                                    setProductFile(file);
-                                                    // Preview logic
-                                                    const reader = new FileReader();
-                                                    reader.onloadend = () => {
-                                                        if (editingProduct) {
-                                                            setEditingProduct({ ...editingProduct, image: reader.result });
-                                                        } else {
-                                                            setNewProduct({ ...newProduct, image: reader.result });
-                                                        }
-                                                    };
-                                                    reader.readAsDataURL(file);
+                                                const files = Array.from(e.target.files);
+                                                if (files.length > 5) {
+                                                    alert('Selecione no máximo 5 imagens.');
+                                                    e.target.value = ''; // Clear input
+                                                    return;
                                                 }
+                                                setProductFiles(files);
                                             }}
                                             className="w-full bg-black border border-gray-700 rounded p-2 text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-500 file:text-white hover:file:bg-sky-600 cursor-pointer"
                                         />
-                                        {/* Preview */}
-                                        {(editingProduct?.image || newProduct.image) && (
-                                            <div className="relative">
-                                                <img
-                                                    src={editingProduct ? editingProduct.image : newProduct.image}
-                                                    alt="Preview"
-                                                    className="w-full h-48 object-cover rounded border border-gray-700"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        setProductFile(null);
-                                                        if (editingProduct) setEditingProduct({ ...editingProduct, image: '' });
-                                                        else setNewProduct({ ...newProduct, image: '' });
-                                                    }}
-                                                    className="absolute top-2 right-2 bg-red-600 p-1 rounded-full text-white hover:bg-red-700"
-                                                >
-                                                    <Trash size={14} />
-                                                </button>
+
+                                        {/* Preview of existing images */}
+                                        {(editingProduct?.images || (editingProduct?.image ? [editingProduct.image] : [])).length > 0 && (
+                                            <div className="grid grid-cols-3 gap-2 mt-2">
+                                                {(editingProduct.images || [editingProduct.image]).map((img, idx) => (
+                                                    <div key={idx} className="relative group">
+                                                        <img src={img} alt={`Preview ${idx}`} className="w-full h-20 object-cover rounded border border-gray-700" />
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                const newImages = (editingProduct.images || [editingProduct.image]).filter((_, i) => i !== idx);
+                                                                setEditingProduct({ ...editingProduct, images: newImages, image: newImages[0] || '' });
+                                                            }}
+                                                            className="absolute top-0 right-0 bg-red-600 p-1 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                                                        >
+                                                            <Trash size={12} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Preview of new files to upload */}
+                                        {productFiles.length > 0 && (
+                                            <div className="mt-2">
+                                                <p className="text-xs text-gray-400 mb-1">Novas imagens para enviar ({productFiles.length}):</p>
+                                                <div className="grid grid-cols-3 gap-2">
+                                                    {productFiles.map((file, idx) => (
+                                                        <div key={idx} className="relative">
+                                                            <div className="w-full h-20 bg-gray-800 rounded border border-gray-700 flex items-center justify-center text-xs text-gray-400 overflow-hidden">
+                                                                {file.name}
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         )}
                                     </div>
@@ -210,7 +231,7 @@ const AdminDashboard = () => {
                                         {editingProduct ? 'Salvar Alterações' : 'Adicionar Produto'}
                                     </button>
                                     {editingProduct && (
-                                        <button type="button" onClick={() => { setEditingProduct(null); setProductFile(null); }} className="px-4 bg-gray-700 hover:bg-gray-600 rounded text-white transition-colors">
+                                        <button type="button" onClick={() => { setEditingProduct(null); setProductFiles([]); }} className="px-4 bg-gray-700 hover:bg-gray-600 rounded text-white transition-colors">
                                             <X size={20} />
                                         </button>
                                     )}
