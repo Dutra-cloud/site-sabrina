@@ -10,6 +10,7 @@ import ProductDetailsPage from './pages/ProductDetailsPage';
 import ProductsPage from './pages/ProductsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import CartPage from './pages/CartPage';
 import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
               <Route path="produto/:id" element={<ProductDetailsPage />} />
               <Route path="sobre" element={<AboutPage />} />
               <Route path="contato" element={<ContactPage />} />
+              <Route path="carrinho" element={<CartPage />} />
               <Route path="login" element={<LoginPage />} />
               <Route path="admin" element={<AdminDashboard />} />
               <Route path="*" element={<div className="text-center py-20">Página não encontrada</div>} />

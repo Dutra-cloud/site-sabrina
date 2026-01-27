@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Menu, User, Settings, Sun, Moon, X } from 'lucide-react';
+import { Search, Menu, User, Settings, Sun, Moon, X, ShoppingCart } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
+import { useData } from '../context/DataContext';
 
 const Header = () => {
     const { user } = useAuth();
     const { isLightMode, toggleTheme } = useTheme();
+    const { cartCount } = useData();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
@@ -71,6 +73,15 @@ const Header = () => {
                         <User size={24} className={user ? "text-blue-500" : ""} />
                     </Link>
 
+                    <Link to="/carrinho" className="relative hover:text-sky-400 transition-colors text-[var(--text-primary)]">
+                        <ShoppingCart size={24} />
+                        {cartCount > 0 && (
+                            <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                {cartCount}
+                            </span>
+                        )}
+                    </Link>
+
                     <button
                         onClick={toggleMenu}
                         className="md:hidden text-[var(--text-primary)] p-2 hover:bg-[var(--bg-secondary)] rounded-lg transition-colors"
@@ -127,6 +138,9 @@ const Header = () => {
                                     <Settings size={24} /> Painel Admin
                                 </Link>
                             )}
+                            <Link to="/carrinho" onClick={toggleMenu} className="text-2xl font-semibold text-[var(--text-primary)] hover:text-sky-500 transition-colors flex items-center gap-3">
+                                <ShoppingCart size={24} /> Carrinho ({cartCount})
+                            </Link>
                         </nav>
 
                         <div className="mt-auto pt-8 border-t border-[var(--border-color)]">

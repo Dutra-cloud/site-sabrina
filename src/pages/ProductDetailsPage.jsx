@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useData } from '../context/DataContext';
-import { MessageCircle, ArrowLeft, Truck, ShieldCheck } from 'lucide-react';
+import { MessageCircle, ArrowLeft, Truck, ShieldCheck, ShoppingCart, Check, Share2 } from 'lucide-react';
 
 const ProductDetailsPage = () => {
     const { id } = useParams();
-    const { products } = useData();
+    const { products, addToCart } = useData();
     const navigate = useNavigate();
     const [activeImage, setActiveImage] = useState('');
+    const [showToast, setShowToast] = useState(false);
 
     const product = products.find(p => p.id.toString() === id);
 
@@ -32,6 +33,12 @@ const ProductDetailsPage = () => {
     }
 
     const images = product.images && product.images.length > 0 ? product.images : [product.image];
+
+    const handleAddToCart = () => {
+        addToCart(product);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+    };
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -83,15 +90,35 @@ const ProductDetailsPage = () => {
                     </div>
 
                     <div className="space-y-4 pt-6">
-                        <a
-                            href={`https://wa.me/5516994322916?text=Olá, gostaria de saber mais sobre o produto: ${product.name}. Link: ${window.location.origin}/produto/${product.id}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center space-x-2 transition-all transform hover:scale-[1.02]"
-                        >
-                            <MessageCircle size={24} />
-                            <span className="text-lg">Pedir pelo WhatsApp</span>
-                        </a>
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <button
+                                onClick={handleAddToCart}
+                                className="flex-1 bg-sky-500 hover:bg-sky-600 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-sky-500/25"
+                            >
+                                <ShoppingCart size={24} />
+                                Adicionar ao Carrinho
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (navigator.share) {
+                                        navigator.share({
+                                            title: product.name,
+                                            text: `Olha esse produto que encontrei na Sabrina De Tudo um Pouco: ${product.name}`,
+                                            url: window.location.href,
+                                        });
+                                    }
+                                }}
+                                className="bg-[var(--bg-secondary)] hover:bg-[var(--border-color)] text-[var(--text-primary)] font-semibold py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-colors border border-[var(--border-color)]"
+                            >
+                                <Share2 size={24} />
+                            </button>
+                        </div>
+
+                        {/* Toast Notification */}
+                        <div className={`fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-xl flex items-center gap-3 transition-all duration-300 transform ${showToast ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'} z-50`}>
+                            <Check size={20} />
+                            <span>Produto adicionado ao carrinho!</span>
+                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-4 pt-6">
