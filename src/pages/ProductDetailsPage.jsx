@@ -49,7 +49,12 @@ const ProductDetailsPage = () => {
                         <span className="text-sky-400 text-sm font-bold tracking-wider uppercase">{product.category}</span>
                         <h1 className="text-4xl font-bold mt-2 mb-4 text-[var(--text-primary)]">{product.name}</h1>
 
-
+                        {/* Price Display - Only for Bags */}
+                        {product.category === 'Bolsas' && (
+                            <p className="text-2xl font-bold text-green-500 mb-4">
+                                R$ {product.price}
+                            </p>
+                        )}
                     </div>
 
                     <div className="space-y-4 pt-6">
@@ -64,22 +69,17 @@ const ProductDetailsPage = () => {
                         </a>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4 pt-6">
+                    <div className="grid grid-cols-1 gap-4 pt-6">
                         <div className="flex items-center space-x-3 text-[var(--text-secondary)]">
                             <Truck size={24} className="text-blue-400" />
-                            <span className="text-sm">Entregamos para Sertãozinho, Pontal, Pitangueiras e Cruz das Posses</span>
-                        </div>
-                        <div className="flex items-center space-x-3 text-[var(--text-secondary)]">
-                            <ShieldCheck size={24} className="text-green-400" />
-                            <span className="text-sm">Garantia de 30 dias</span>
+                            <span className="text-sm">Entregamos para Sertãozinho, Pontal, Barrinha e Cruz das Posses</span>
                         </div>
                     </div>
 
                     <div className="pt-8">
                         <h3 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Descrição</h3>
-                        <p className="text-[var(--text-secondary)] leading-relaxed">
-                            Este é um produto de alta qualidade da Sabrina De Tudo um Pouco. Perfeito para o seu dia a dia escolar ou de trabalho.
-                            Fabricado com os melhores materiais para garantir durabilidade e estilo.
+                        <p className="text-[var(--text-secondary)] leading-relaxed whitespace-pre-line">
+                            {product.description || "Descrição não disponível."}
                         </p>
                     </div>
                 </div>

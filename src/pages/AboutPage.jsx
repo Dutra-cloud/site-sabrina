@@ -92,7 +92,7 @@ const AboutPage = () => {
                                 Em 2010, entramos com as vendas online e vendedoras representando nossos produtos, continuando essa trajetória de sucesso até o dia de hoje.
                             </p>
                             <p>
-                                Obrigado a todos que acreditaram em nossos produtos e nosso modo de atender. E para atender cada vez melhor, apresentamos nossa nova fase: <strong className="text-sky-400">Sabrina De Tudo um Pouco</strong>.
+                                Obrigado a todos que acreditaram no nosso trabalho e maneira de atender. E para vocês clientes, estamos abrindo esta nova loja. <strong className="text-sky-400">Sabrina de Tudo um Pouco</strong>.
                             </p>
                         </div>
                     </div>
