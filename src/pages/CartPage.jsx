@@ -19,7 +19,8 @@ const CartPage = () => {
         message += `*Itens do Pedido:*\n`;
 
         cart.forEach(item => {
-            message += `- ${item.quantity}x ${item.name} (R$ ${item.price.toFixed(2)})\n`;
+            const price = Number(item.price) || 0;
+            message += `- ${item.quantity}x ${item.name} (R$ ${price.toFixed(2)})\n`;
         });
 
         message += `\n*Total: R$ ${cartTotal.toFixed(2)}*`;
@@ -68,7 +69,7 @@ const CartPage = () => {
                             <div className="flex-1 flex flex-col justify-between">
                                 <div>
                                     <h3 className="font-semibold text-[var(--text-primary)] line-clamp-2">{item.name}</h3>
-                                    <p className="text-sky-500 font-bold mt-1">R$ {item.price.toFixed(2)}</p>
+                                    <p className="text-sky-500 font-bold mt-1">R$ {(Number(item.price) || 0).toFixed(2)}</p>
                                 </div>
 
                                 <div className="flex items-center justify-between mt-2">

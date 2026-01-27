@@ -181,7 +181,10 @@ export const DataProvider = ({ children }) => {
         setCart([]);
     };
 
-    const cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    const cartTotal = cart.reduce((total, item) => {
+        const price = Number(item.price) || 0;
+        return total + (price * item.quantity);
+    }, 0);
     const cartCount = cart.reduce((count, item) => count + item.quantity, 0);
 
     return (
