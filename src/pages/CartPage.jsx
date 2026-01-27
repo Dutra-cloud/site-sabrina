@@ -20,10 +20,16 @@ const CartPage = () => {
 
         cart.forEach(item => {
             const price = Number(item.price) || 0;
-            message += `- ${item.quantity}x ${item.name} (R$ ${price.toFixed(2)})\n`;
+            if (price > 0) {
+                message += `- ${item.quantity}x ${item.name} (R$ ${price.toFixed(2)})\n`;
+            } else {
+                message += `- ${item.quantity}x ${item.name}\n`;
+            }
         });
 
-        message += `\n*Total: R$ ${cartTotal.toFixed(2)}*`;
+        if (cartTotal > 0) {
+            message += `\n*Total: R$ ${cartTotal.toFixed(2)}*`;
+        }
         message += `\n\nAguardo a confirmação do pedido!`;
 
         const encodedMessage = encodeURIComponent(message);
@@ -69,7 +75,9 @@ const CartPage = () => {
                             <div className="flex-1 flex flex-col justify-between">
                                 <div>
                                     <h3 className="font-semibold text-[var(--text-primary)] line-clamp-2">{item.name}</h3>
-                                    <p className="text-sky-500 font-bold mt-1">R$ {(Number(item.price) || 0).toFixed(2)}</p>
+                                    {(Number(item.price) || 0) > 0 && (
+                                        <p className="text-sky-500 font-bold mt-1">R$ {(Number(item.price) || 0).toFixed(2)}</p>
+                                    )}
                                 </div>
 
                                 <div className="flex items-center justify-between mt-2">
@@ -109,18 +117,22 @@ const CartPage = () => {
                         <h3 className="text-xl font-bold text-[var(--text-primary)] mb-6">Resumo do Pedido</h3>
 
                         <div className="space-y-3 mb-6">
-                            <div className="flex justify-between text-[var(--text-secondary)]">
-                                <span>Subtotal</span>
-                                <span>R$ {cartTotal.toFixed(2)}</span>
-                            </div>
+                            {cartTotal > 0 && (
+                                <div className="flex justify-between text-[var(--text-secondary)]">
+                                    <span>Subtotal</span>
+                                    <span>R$ {cartTotal.toFixed(2)}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between text-[var(--text-secondary)]">
                                 <span>Entrega</span>
                                 <span className="text-green-500 text-sm">A combinar</span>
                             </div>
-                            <div className="border-t border-[var(--border-color)] pt-3 flex justify-between font-bold text-lg text-[var(--text-primary)]">
-                                <span>Total</span>
-                                <span>R$ {cartTotal.toFixed(2)}</span>
-                            </div>
+                            {cartTotal > 0 && (
+                                <div className="border-t border-[var(--border-color)] pt-3 flex justify-between font-bold text-lg text-[var(--text-primary)]">
+                                    <span>Total</span>
+                                    <span>R$ {cartTotal.toFixed(2)}</span>
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-4">
