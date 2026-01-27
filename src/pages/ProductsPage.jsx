@@ -98,14 +98,14 @@ const ProductsPage = () => {
                     </button>
                     {categories.map((category) => (
                         <button
-                            key={category}
-                            onClick={() => handleCategorySelect(category)}
-                            className={`px-4 py-2 rounded-full whitespace-nowrap transition-all border ${selectedCategory === category
+                            key={category.name}
+                            onClick={() => handleCategorySelect(category.name)}
+                            className={`px-4 py-2 rounded-full whitespace-nowrap transition-all border ${selectedCategory === category.name
                                 ? 'bg-sky-500 border-sky-500 text-white'
                                 : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-sky-500'
                                 }`}
                         >
-                            {category}
+                            {category.name}
                         </button>
                     ))}
                 </div>
@@ -136,7 +136,7 @@ const ProductsPage = () => {
                     )}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
                     {filteredProducts.map((product) => (
                         <Link to={`/produto/${product.id}`} key={product.id} className="bg-[var(--bg-secondary)] rounded-xl overflow-hidden border border-[var(--border-color)] hover:border-gray-600 transition-all group block">
                             <div className="relative aspect-square overflow-hidden bg-gray-800">

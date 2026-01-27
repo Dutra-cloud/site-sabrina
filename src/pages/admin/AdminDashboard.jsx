@@ -67,6 +67,9 @@ const AdminDashboard = () => {
                 }
             }
 
+            // Remove auxiliary field before sending to backend
+            delete productData.noPrice;
+
             if (editingProduct) {
                 await updateProduct(productData);
                 setEditingProduct(null);
@@ -189,7 +192,7 @@ const AdminDashboard = () => {
                                         className="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-sky-400 focus:outline-none"
                                     >
                                         <option value="">Selecione...</option>
-                                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                                        {categories.map(c => <option key={c.name} value={c.name}>{c.name}</option>)}
                                     </select>
                                 </div>
                                 <div>
@@ -408,24 +411,48 @@ const AdminDashboard = () => {
                     <div className="bg-gray-900 p-6 rounded border border-gray-800 mb-8">
                         <h3 className="font-bold mb-4 text-white">Adicionar Nova Categoria</h3>
                         <form
-                            onSubmit={(e) => {
+                            onSubmit={async (e) => {
                                 e.preventDefault();
-                                const val = e.target.category.value.trim();
-                                if (val) {
-                                    addCategory(val);
-                                    e.target.reset();
+                                const name = e.target.categoryName.value.trim();
+                                const file = e.target.categoryImage.files[0];
+
+                                if (name && file) {
+                                    try {
+                                        const imageUrl = await uploadFile(file);
+                                        await addCategory({ name, image: imageUrl });
+                                        e.target.reset();
+                                        alert('Categoria adicionada com sucesso!');
+                                    } catch (err) {
+                                        alert('Erro ao adicionar categoria: ' + err.message);
+                                    }
+                                } else {
+                                    alert('Preencha o nome e selecione uma imagem.');
                                 }
                             }}
-                            className="flex gap-2"
+                            className="space-y-4"
                         >
-                            <input
-                                name="category"
-                                type="text"
-                                placeholder="Nome da categoria"
-                                className="flex-1 bg-black border border-gray-700 rounded p-2 text-white focus:border-sky-400 focus:outline-none"
-                            />
-                            <button type="submit" className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded">
-                                Adicionar
+                            <div>
+                                <label className="block text-sm mb-1 text-white">Nome da Categoria</label>
+                                <input
+                                    name="categoryName"
+                                    type="text"
+                                    placeholder="Ex: Mochilas"
+                                    className="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-sky-400 focus:outline-none"
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm mb-1 text-white">Imagem da Categoria</label>
+                                <input
+                                    name="categoryImage"
+                                    type="file"
+                                    accept="image/*"
+                                    className="w-full bg-black border border-gray-700 rounded p-2 text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-sky-500 file:text-white hover:file:bg-sky-600 cursor-pointer"
+                                    required
+                                />
+                            </div>
+                            <button type="submit" className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded w-full sm:w-auto">
+                                Adicionar Categoria
                             </button>
                         </form>
                     </div>
@@ -433,10 +460,13 @@ const AdminDashboard = () => {
                     {/* List Categories */}
                     <div className="space-y-2">
                         {categories.map(category => (
-                            <div key={category} className="bg-gray-900 p-4 rounded flex items-center justify-between border border-gray-800">
-                                <span className="text-white font-medium">{category}</span>
+                            <div key={category.name} className="bg-gray-900 p-4 rounded flex items-center justify-between border border-gray-800">
+                                <div className="flex items-center gap-4">
+                                    <img src={category.image} alt={category.name} className="w-12 h-12 rounded object-cover border border-gray-700" />
+                                    <span className="text-white font-medium">{category.name}</span>
+                                </div>
                                 <button
-                                    onClick={() => deleteCategory(category)}
+                                    onClick={() => deleteCategory(category.name)}
                                     className="p-2 hover:bg-red-900 rounded text-red-400 transition-colors"
                                     title="Excluir Categoria"
                                 >

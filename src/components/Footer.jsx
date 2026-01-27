@@ -21,9 +21,9 @@ const Footer = () => {
                         <h4 className="font-bold mb-4 text-[var(--text-primary)]">Categorias</h4>
                         <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
                             {categories.map((category) => (
-                                <li key={category}>
-                                    <Link to={`/produtos?categoria=${encodeURIComponent(category)}`} className="hover:text-[var(--text-primary)]">
-                                        {category}
+                                <li key={category.name}>
+                                    <Link to={`/produtos?categoria=${encodeURIComponent(category.name)}`} className="hover:text-[var(--text-primary)]">
+                                        {category.name}
                                     </Link>
                                 </li>
                             ))}

@@ -109,63 +109,27 @@ const HomePage = () => {
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
             </section>
 
-            {/* Categories Bar */}
-            <section>
-                <h2 className="text-xl font-bold mb-4 text-[var(--text-primary)]">Categorias</h2>
-                <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide">
-                    <Link
-                        to="/produtos"
-                        className="bg-[var(--bg-secondary)] hover:bg-sky-500 border border-[var(--border-color)] hover:border-sky-400 text-[var(--text-primary)] px-6 py-3 rounded-full whitespace-nowrap transition-all"
-                    >
-                        Todos
-                    </Link>
+            {/* Categories Grid */}
+            <section className="max-w-7xl mx-auto px-4">
+                <h2 className="text-3xl font-bold mb-8 text-[var(--text-primary)] text-center">Nossas Categorias</h2>
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-8">
                     {categories.map((category) => (
                         <Link
-                            key={category}
-                            to={`/produtos?categoria=${category}`}
-                            className="bg-[var(--bg-secondary)] hover:bg-sky-500 border border-[var(--border-color)] hover:border-sky-400 text-[var(--text-primary)] px-6 py-3 rounded-full whitespace-nowrap transition-all"
+                            key={category.name}
+                            to={`/produtos?categoria=${category.name}`}
+                            className="group relative rounded-2xl overflow-hidden aspect-square border border-[var(--border-color)] shadow-lg hover:shadow-xl transition-all hover:-translate-y-1"
                         >
-                            {category}
+                            <img
+                                src={category.image}
+                                alt={category.name}
+                                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-4">
+                                <h3 className="text-white font-bold text-lg md:text-xl w-full text-center">{category.name}</h3>
+                            </div>
                         </Link>
                     ))}
                 </div>
-            </section>
-
-            {/* Featured Products */}
-            <section>
-                <div className="flex items-center justify-between mb-8">
-                    <h2 className="text-3xl font-bold text-[var(--text-primary)]">Destaques da Semana</h2>
-                    <Link to="/produtos" className="text-sky-400 hover:text-sky-300">Ver todos</Link>
-                </div>
-
-                {error ? (
-                    <div className="bg-red-500/10 border border-red-500 text-red-500 p-4 rounded-xl">
-                        <p className="font-bold">Erro ao carregar destaques:</p>
-                        <p>{error}</p>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        {products.map((product) => (
-                            <Link to={`/produto/${product.id}`} key={product.id} className="bg-[var(--bg-secondary)] rounded-xl overflow-hidden border border-[var(--border-color)] hover:border-gray-600 transition-all group block">
-                                <div className="relative aspect-square overflow-hidden bg-gray-800">
-                                    <img
-                                        src={product.image}
-                                        alt={product.name}
-                                        className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-300"
-                                    />
-                                    <div className="absolute bottom-4 right-4 bg-green-600 p-3 rounded-full text-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0 z-10">
-                                        <MessageCircle size={20} />
-                                    </div>
-                                </div>
-
-                                <div className="p-4">
-                                    <h3 className="font-medium text-lg mb-2 line-clamp-2 h-14 text-[var(--text-primary)]">{product.name}</h3>
-                                    <p className="text-sm text-green-400 font-bold">Ver detalhes</p>
-                                </div>
-                            </Link>
-                        ))}
-                    </div>
-                )}
             </section>
 
 

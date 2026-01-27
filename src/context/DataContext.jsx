@@ -46,10 +46,23 @@ export const DataProvider = ({ children }) => {
             if (categoriesError && categoriesError.code !== 'PGRST116') console.error('Error fetching categories:', categoriesError);
 
             if (categoriesData) {
-                setCategories(categoriesData.value.list || []);
+                // Normalize categories to objects if they are strings
+                const normalizedCategories = (categoriesData.value.list || []).map(cat => {
+                    if (typeof cat === 'string') {
+                        return { name: cat, image: 'https://placehold.co/300x300/202020/white?text=' + cat };
+                    }
+                    return cat;
+                });
+                setCategories(normalizedCategories);
             } else {
                 // Inicializar categorias se não existirem
-                const defaultCats = ['Cadernos', 'Escrita', 'Acessórios', 'Mochilas', 'Artes'];
+                const defaultCats = [
+                    { name: 'Cadernos', image: 'https://placehold.co/300x300/202020/white?text=Cadernos' },
+                    { name: 'Escrita', image: 'https://placehold.co/300x300/202020/white?text=Escrita' },
+                    { name: 'Acessórios', image: 'https://placehold.co/300x300/202020/white?text=Acessórios' },
+                    { name: 'Mochilas', image: 'https://placehold.co/300x300/202020/white?text=Mochilas' },
+                    { name: 'Artes', image: 'https://placehold.co/300x300/202020/white?text=Artes' }
+                ];
                 const { error: insertError } = await supabase.from('settings').insert({ key: 'categories', value: { list: defaultCats } });
                 if (insertError) console.error('Error initializing categories:', insertError);
                 setCategories(defaultCats);
@@ -125,17 +138,19 @@ export const DataProvider = ({ children }) => {
         setProducts(prev => prev.filter(p => p.id !== id));
     };
 
-    const addCategory = async (category) => {
-        if (!categories.includes(category)) {
-            const newCategories = [...categories, category];
+    const addCategory = async (categoryData) => {
+        // categoryData expects { name, image }
+        // Check if category name already exists
+        if (!categories.some(c => c.name === categoryData.name)) {
+            const newCategories = [...categories, categoryData];
             const { error } = await supabase.from('settings').upsert({ key: 'categories', value: { list: newCategories } });
             if (error) throw error;
             setCategories(newCategories);
         }
     };
 
-    const deleteCategory = async (category) => {
-        const newCategories = categories.filter(c => c !== category);
+    const deleteCategory = async (categoryName) => {
+        const newCategories = categories.filter(c => c.name !== categoryName);
         const { error } = await supabase.from('settings').upsert({ key: 'categories', value: { list: newCategories } });
         if (error) throw error;
         setCategories(newCategories);
