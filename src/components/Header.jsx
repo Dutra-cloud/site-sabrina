@@ -21,7 +21,7 @@ const Header = () => {
                     <img
                         src={isLightMode ? "/logo-dark.jpg" : "/logo-light.jpg"}
                         alt="Sabrina De Tudo um Pouco"
-                        className="h-12 md:h-20 w-auto object-contain"
+                        className="h-16 md:h-24 w-auto object-contain"
                     />
                 </Link>
 
