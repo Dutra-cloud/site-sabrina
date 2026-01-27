@@ -100,10 +100,10 @@ const HomePage = () => {
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
                 <div className="text-center space-y-6">
                     <h2 className="text-2xl md:text-3xl font-light text-[var(--text-primary)] tracking-wide">
-                        Bem-vindo à <span className="font-bold text-sky-500">Sabrina De Tudo um Pouco</span>
+                        Bem-vindo à <span className="font-bold text-sky-500">Sabrina Acessórios</span>
                     </h2>
                     <p className="text-lg md:text-xl text-[var(--text-secondary)] leading-relaxed max-w-3xl mx-auto font-light">
-                        Sabrina De Tudo um Pouco, que há mais de 26 anos vem realçando a beleza feminina, agora tem mais uma loja. <strong className="text-[var(--text-primary)]">Sabrina De Tudo um Pouco</strong>, que é uma loja que foca em oferecer uma ampla variedade de produtos para facilitar o dia a dia, abrangendo desde acessórios pessoais e utilidades domésticas até opções de presentes e conveniências para toda a família.
+                        Sabrina Acessórios, que há mais de 26 anos vem realçando a beleza feminina, agora tem mais uma loja. <strong className="text-[var(--text-primary)]">Sabrina De Tudo um Pouco</strong>, que é uma loja que foca em oferecer uma ampla variedade de produtos para facilitar o dia a dia, abrangendo desde acessórios pessoais, utilidades domésticas até opções de presentes para toda a família.
                     </p>
                 </div>
                 <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-24 h-1 bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-50"></div>
