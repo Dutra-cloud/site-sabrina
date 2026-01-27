@@ -12,7 +12,7 @@ const AdminDashboard = () => {
 
     // Product Form State
     const [editingProduct, setEditingProduct] = useState(null);
-    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', image: '' });
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', image: '', description: '' });
     const [productFile, setProductFile] = useState(null);
 
     // Banner Form State
@@ -43,12 +43,22 @@ const AdminDashboard = () => {
                 imageUrl = await uploadFile(productFile);
             }
 
+            const productData = editingProduct ? { ...editingProduct } : { ...newProduct };
+            productData.image = imageUrl || 'https://placehold.co/300x300/202020/white?text=Produto';
+            
+            // Ensure price is a number/float
+            productData.price = parseFloat(productData.price.toString().replace(',', '.'));
+            
+            if (isNaN(productData.price)) {
+                throw new Error("O preço deve ser um número válido.");
+            }
+
             if (editingProduct) {
-                await updateProduct({ ...editingProduct, image: imageUrl });
+                await updateProduct(productData);
                 setEditingProduct(null);
             } else {
-                await addProduct({ ...newProduct, image: imageUrl || 'https://placehold.co/300x300/202020/white?text=Produto' });
-                setNewProduct({ name: '', price: '', category: '', image: '' });
+                await addProduct(productData);
+                setNewProduct({ name: '', price: '', category: '', image: '', description: '' });
             }
             setProductFile(null);
             alert('Produto salvo com sucesso!');
@@ -139,6 +149,14 @@ const AdminDashboard = () => {
                                         <option value="">Selecione...</option>
                                         {categories.map(c => <option key={c} value={c}>{c}</option>)}
                                     </select>
+                                </div>
+                                <div>
+                                    <label className="block text-sm mb-1 text-white">Descrição</label>
+                                    <textarea
+                                        value={editingProduct ? (editingProduct.description || '') : newProduct.description}
+                                        onChange={e => editingProduct ? setEditingProduct({ ...editingProduct, description: e.target.value }) : setNewProduct({ ...newProduct, description: e.target.value })}
+                                        className="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-sky-400 focus:outline-none h-24"
+                                    />
                                 </div>
                                 <div>
                                     <label className="block text-sm mb-1 text-white">Imagem do Produto</label>
