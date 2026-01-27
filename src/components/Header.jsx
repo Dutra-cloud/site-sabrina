@@ -15,7 +15,7 @@ const Header = () => {
 
     return (
         <header className="bg-[var(--bg-primary)] border-b border-[var(--border-color)] sticky top-0 z-50 transition-colors duration-300">
-            <div className="container mx-auto px-4 h-20 md:h-24 flex items-center justify-between">
+            <div className="container mx-auto px-4 h-24 md:h-28 flex items-center justify-between">
                 {/* Logo */}
                 <Link to="/" className={`flex items-center p-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ${isLightMode ? 'bg-white' : 'bg-black'}`}>
                     <img

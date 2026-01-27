@@ -14,7 +14,7 @@ const CartPage = () => {
         }
 
         const phoneNumber = '5516994322916'; // Número da loja
-        let message = `*Novo Pedido - Sabrina De Tudo um Pouco*\n\n`;
+        let message = `*Novo Pedido - Sabrina Acessórios*\n\n`;
         message += `*Cliente:* ${customerName}\n\n`;
         message += `*Itens do Pedido:*\n`;
 
@@ -27,9 +27,7 @@ const CartPage = () => {
             }
         });
 
-        if (cartTotal > 0) {
-            message += `\n*Total: R$ ${cartTotal.toFixed(2)}*`;
-        }
+
         message += `\n\nAguardo a confirmação do pedido!`;
 
         const encodedMessage = encodeURIComponent(message);
@@ -117,22 +115,7 @@ const CartPage = () => {
                         <h3 className="text-xl font-bold text-[var(--text-primary)] mb-6">Resumo do Pedido</h3>
 
                         <div className="space-y-3 mb-6">
-                            {cartTotal > 0 && (
-                                <div className="flex justify-between text-[var(--text-secondary)]">
-                                    <span>Subtotal</span>
-                                    <span>R$ {cartTotal.toFixed(2)}</span>
-                                </div>
-                            )}
-                            <div className="flex justify-between text-[var(--text-secondary)]">
-                                <span>Entrega</span>
-                                <span className="text-green-500 text-sm">A combinar</span>
-                            </div>
-                            {cartTotal > 0 && (
-                                <div className="border-t border-[var(--border-color)] pt-3 flex justify-between font-bold text-lg text-[var(--text-primary)]">
-                                    <span>Total</span>
-                                    <span>R$ {cartTotal.toFixed(2)}</span>
-                                </div>
-                            )}
+                            {/* Resumo removido conforme solicitado */}
                         </div>
 
                         <div className="space-y-4">

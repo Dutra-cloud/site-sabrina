@@ -12,7 +12,7 @@ const AdminDashboard = () => {
 
     // Product Form State
     const [editingProduct, setEditingProduct] = useState(null);
-    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', image: '', images: [], description: '' });
+    const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', image: '', images: [], description: '', noPrice: false });
     const [productFiles, setProductFiles] = useState([]);
 
     // Banner Form State
@@ -58,10 +58,13 @@ const AdminDashboard = () => {
             productData.images = imageUrls;
 
             // Ensure price is a number/float
-            productData.price = parseFloat(productData.price.toString().replace(',', '.'));
-
-            if (isNaN(productData.price)) {
-                throw new Error("O preço deve ser um número válido.");
+            if (productData.noPrice) {
+                productData.price = 0;
+            } else {
+                productData.price = parseFloat(productData.price.toString().replace(',', '.'));
+                if (isNaN(productData.price)) {
+                    throw new Error("O preço deve ser um número válido.");
+                }
             }
 
             if (editingProduct) {
@@ -69,7 +72,7 @@ const AdminDashboard = () => {
                 setEditingProduct(null);
             } else {
                 await addProduct(productData);
-                setNewProduct({ name: '', price: '', category: '', image: '', images: [], description: '' });
+                setNewProduct({ name: '', price: '', category: '', image: '', images: [], description: '', noPrice: false });
             }
             setProductFiles([]);
             alert('Produto salvo com sucesso!');
@@ -143,12 +146,40 @@ const AdminDashboard = () => {
                                 </div>
                                 <div>
                                     <label className="block text-sm mb-1 text-white">Preço</label>
-                                    <input
-                                        type="text"
-                                        value={editingProduct ? editingProduct.price : newProduct.price}
-                                        onChange={e => editingProduct ? setEditingProduct({ ...editingProduct, price: e.target.value }) : setNewProduct({ ...newProduct, price: e.target.value })}
-                                        className="w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-sky-400 focus:outline-none"
-                                    />
+                                    <div className="flex flex-col gap-2">
+                                        <input
+                                            type="text"
+                                            value={editingProduct ? editingProduct.price : newProduct.price}
+                                            onChange={e => editingProduct ? setEditingProduct({ ...editingProduct, price: e.target.value }) : setNewProduct({ ...newProduct, price: e.target.value })}
+                                            className={`w-full bg-black border border-gray-700 rounded p-2 text-white focus:border-sky-400 focus:outline-none ${(editingProduct ? editingProduct.noPrice : newProduct.noPrice) ? 'opacity-50 cursor-not-allowed' : ''
+                                                }`}
+                                            disabled={editingProduct ? editingProduct.noPrice : newProduct.noPrice}
+                                        />
+                                        <label className="flex items-center space-x-2 cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                checked={editingProduct ? (editingProduct.noPrice ?? (editingProduct.price === 0)) : newProduct.noPrice}
+                                                onChange={e => {
+                                                    const checked = e.target.checked;
+                                                    if (editingProduct) {
+                                                        setEditingProduct({
+                                                            ...editingProduct,
+                                                            noPrice: checked,
+                                                            price: checked ? 0 : (editingProduct.price === 0 ? '' : editingProduct.price)
+                                                        });
+                                                    } else {
+                                                        setNewProduct({
+                                                            ...newProduct,
+                                                            noPrice: checked,
+                                                            price: checked ? '' : newProduct.price
+                                                        });
+                                                    }
+                                                }}
+                                                className="form-checkbox h-4 w-4 text-sky-500 rounded border-gray-700 bg-black focus:ring-sky-500 focus:ring-offset-gray-900"
+                                            />
+                                            <span className="text-sm text-gray-300">Não utilizar preço</span>
+                                        </label>
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-sm mb-1 text-white">Categoria</label>
@@ -255,8 +286,8 @@ const AdminDashboard = () => {
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() => {
-                                                    setEditingProduct(product);
-                                                    setProductFile(null);
+                                                    setEditingProduct({ ...product, noPrice: product.price === 0 });
+                                                    setProductFiles([]);
                                                     window.scrollTo({ top: 0, behavior: 'smooth' });
                                                 }}
                                                 className="p-2 hover:bg-blue-900 rounded text-blue-400 transition-colors"

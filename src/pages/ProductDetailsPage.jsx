@@ -82,7 +82,7 @@ const ProductDetailsPage = () => {
                         <h1 className="text-4xl font-bold mt-2 mb-4 text-[var(--text-primary)]">{product.name}</h1>
 
                         {/* Price Display - Only for Bags */}
-                        {product.category === 'Bolsas' && (
+                        {product.category === 'Bolsas' && Number(product.price) > 0 && (
                             <p className="text-2xl font-bold text-green-500 mb-4">
                                 R$ {product.price}
                             </p>
