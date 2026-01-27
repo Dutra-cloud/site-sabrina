@@ -269,20 +269,27 @@ const AdminDashboard = () => {
                             </div>
                             <div>
                                 <label className="block text-sm mb-1 text-white">Imagem ou Vídeo de Fundo</label>
+                                <p className="text-xs text-gray-400 mb-2">Aceita imagens (JPG, PNG, GIF, WEBP) e vídeos (MP4, WEBM, MOV)</p>
                                 <input
                                     type="file"
-                                    accept="image/*,video/*"
+                                    accept="image/*,video/*,video/mp4,video/webm,video/quicktime"
                                     onChange={(e) => {
                                         const file = e.target.files[0];
                                         if (file) {
+                                            console.log('Arquivo selecionado:', file.name, 'Tipo:', file.type);
                                             setBannerFile(file);
+
+                                            // Detectar tipo de arquivo
+                                            const isVideo = file.type.startsWith('video/') ||
+                                                file.name.match(/\.(mp4|webm|mov|avi|mkv)$/i);
+
                                             // Preview
                                             const reader = new FileReader();
                                             reader.onloadend = () => {
                                                 setBannerForm({
                                                     ...bannerForm,
                                                     media: reader.result,
-                                                    mediaType: file.type.startsWith('video') ? 'video' : 'image'
+                                                    mediaType: isVideo ? 'video' : 'image'
                                                 });
                                             };
                                             reader.readAsDataURL(file);
@@ -292,12 +299,14 @@ const AdminDashboard = () => {
                                 />
                                 {bannerForm.media && (
                                     <div className="mt-2 relative">
+                                        <p className="text-xs text-gray-400 mb-1">Preview: {bannerForm.mediaType === 'video' ? 'Vídeo' : 'Imagem'}</p>
                                         {bannerForm.mediaType === 'video' ? (
                                             <video src={bannerForm.media} className="w-full h-48 object-cover rounded border border-gray-700" controls />
                                         ) : (
                                             <img src={bannerForm.media} alt="Banner Preview" className="w-full h-48 object-cover rounded border border-gray-700" />
                                         )}
                                         <button
+                                            type="button"
                                             onClick={() => {
                                                 setBannerForm({ ...bannerForm, media: '', mediaType: '' });
                                                 setBannerFile(null);

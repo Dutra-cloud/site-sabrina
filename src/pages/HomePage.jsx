@@ -9,7 +9,7 @@ const HomePage = () => {
     return (
         <div className="space-y-12">
             {/* Hero Section */}
-            <section className="relative min-h-[600px] rounded-3xl overflow-hidden flex items-center px-6 md:px-20 shadow-2xl py-20">
+            <section className="relative min-h-[400px] sm:min-h-[500px] md:min-h-[600px] rounded-3xl overflow-hidden flex items-center px-6 md:px-20 shadow-2xl py-12 md:py-20">
                 {/* Background Media or Gradient */}
                 <div className="absolute inset-0 z-0">
                     {banner.media ? (
@@ -41,20 +41,20 @@ const HomePage = () => {
                 </div>
 
                 <div className="max-w-3xl z-10 relative animate-fade-in-up">
-                    <span className="inline-block bg-sky-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-4 tracking-widest uppercase animate-pulse">
+                    <span className="inline-block bg-sky-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3 md:mb-4 tracking-widest uppercase animate-pulse">
                         Temporada 2026
                     </span>
-                    <h1 className="text-4xl md:text-7xl font-black mb-6 leading-tight whitespace-pre-line text-white drop-shadow-lg">
+                    <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black mb-4 md:mb-6 leading-tight whitespace-pre-line text-white drop-shadow-lg">
                         {banner.title}
                     </h1>
-                    <p className="text-lg md:text-2xl text-gray-100 mb-10 max-w-xl leading-relaxed drop-shadow-md">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-100 mb-6 md:mb-10 max-w-xl leading-relaxed drop-shadow-md">
                         {banner.subtitle}
                     </p>
-                    <div className="flex flex-wrap gap-4">
-                        <Link to="/produtos" className="bg-sky-500 text-white font-black py-4 px-10 rounded-full hover:bg-sky-400 transition-all transform hover:scale-105 shadow-xl hover:shadow-sky-500/40 flex items-center gap-2">
+                    <div className="flex flex-wrap gap-3 md:gap-4">
+                        <Link to="/produtos" className="bg-sky-500 text-white font-black py-3 px-6 md:py-4 md:px-10 rounded-full hover:bg-sky-400 transition-all transform hover:scale-105 shadow-xl hover:shadow-sky-500/40 flex items-center gap-2 text-sm md:text-base">
                             {banner.buttonText}
                         </Link>
-                        <Link to="/produtos" className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold py-4 px-10 rounded-full hover:bg-white/20 transition-all">
+                        <Link to="/produtos" className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-bold py-3 px-6 md:py-4 md:px-10 rounded-full hover:bg-white/20 transition-all text-sm md:text-base">
                             Ver Catálogo
                         </Link>
                     </div>
