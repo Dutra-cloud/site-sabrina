@@ -90,6 +90,16 @@ const ProductDetailsPage = () => {
                     </div>
 
                     <div className="space-y-4 pt-6">
+                        <a
+                            href={`https://wa.me/5516994322916?text=${encodeURIComponent(`Olá, gostaria de pedir o produto: ${product.name}`)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-xl flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] shadow-lg hover:shadow-green-600/25"
+                        >
+                            <MessageCircle size={24} />
+                            Pedir pelo WhatsApp
+                        </a>
+
                         <div className="flex flex-col sm:flex-row gap-4">
                             <button
                                 onClick={handleAddToCart}
