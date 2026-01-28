@@ -71,17 +71,17 @@ const HomePage = () => {
                             </svg>
                         </div>
                         <div className="flex-1 md:hidden">
-                            <h3 className="text-base font-bold text-[var(--text-primary)]">Grupo VIP de Ofertas</h3>
+                            <h3 className="text-base font-bold text-[var(--text-primary)]">Grupo VIP de Produtos e Ofertas</h3>
                             <p className="text-xs text-[var(--text-secondary)] line-clamp-2">
-                                Receba ofertas diárias no seu WhatsApp.
+                                Visualize no status do WhatsApp diariamente
                             </p>
                         </div>
                     </div>
 
                     <div className="hidden md:block flex-1 text-left space-y-3">
-                        <h3 className="text-xl font-bold text-[var(--text-primary)]">Grupo VIP de Ofertas</h3>
+                        <h3 className="text-xl font-bold text-[var(--text-primary)]">Grupo VIP de Produtos e Ofertas</h3>
                         <p className="text-[var(--text-secondary)]">
-                            Clique no link e, ao entrar no WhatsApp, mande um oi e vamos te adicionar para ter acesso ao nosso status com ofertas e produtos da loja diariamente.
+                            Visualize no status do WhatsApp diariamente
                         </p>
                         <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400 font-medium pt-2">
                             <span>🚚</span>
