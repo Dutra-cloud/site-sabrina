@@ -123,12 +123,12 @@ const HomePage = () => {
             {/* Categories Grid */}
             <section className="max-w-7xl mx-auto px-4">
                 <h2 className="text-3xl font-bold mb-8 text-[var(--text-primary)] text-center">Nossas Categorias</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
                     {categories.map((category) => (
                         <Link
                             key={category.name}
                             to={`/produtos?categoria=${category.name}`}
-                            className="group relative rounded-3xl overflow-hidden aspect-[4/3] border-2 border-transparent hover:border-sky-500/50 shadow-lg hover:shadow-2xl hover:shadow-sky-500/20 transition-all duration-500"
+                            className="group relative rounded-2xl md:rounded-3xl overflow-hidden aspect-[4/3] border-2 border-transparent hover:border-sky-500/50 shadow-lg hover:shadow-2xl hover:shadow-sky-500/20 transition-all duration-500"
                         >
                             <div className="absolute inset-0 bg-gray-900">
                                 <img
@@ -142,12 +142,12 @@ const HomePage = () => {
                             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90 group-hover:opacity-70 transition-opacity duration-500"></div>
 
                             {/* Content */}
-                            <div className="absolute inset-0 flex flex-col justify-end p-8 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                                <h3 className="text-white font-black text-3xl md:text-4xl mb-2 tracking-tight drop-shadow-lg group-hover:text-sky-400 transition-colors">
+                            <div className="absolute inset-0 flex flex-col justify-end p-4 md:p-8 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                                <h3 className="text-white font-black text-lg md:text-4xl mb-1 md:mb-2 tracking-tight drop-shadow-lg group-hover:text-sky-400 transition-colors">
                                     {category.name}
                                 </h3>
-                                <div className="w-12 h-1.5 bg-sky-500 rounded-full transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 delay-100"></div>
-                                <p className="text-gray-300 text-sm font-medium mt-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
+                                <div className="w-8 md:w-12 h-1 md:h-1.5 bg-sky-500 rounded-full transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-500 delay-100"></div>
+                                <p className="text-gray-300 text-xs md:text-sm font-medium mt-2 md:mt-3 opacity-0 group-hover:opacity-100 transform translate-y-4 group-hover:translate-y-0 transition-all duration-500 delay-100">
                                     Ver produtos &rarr;
                                 </p>
                             </div>

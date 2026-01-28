@@ -86,10 +86,10 @@ const ProductsPage = () => {
                 </div>
 
                 {/* Categories List */}
-                <div className="flex space-x-3 overflow-x-auto pb-2 scrollbar-hide">
+                <div className="flex flex-wrap gap-2 pb-2">
                     <button
                         onClick={() => handleCategorySelect('')}
-                        className={`px-4 py-2 rounded-full whitespace-nowrap transition-all border ${!selectedCategory
+                        className={`px-4 py-2 rounded-full whitespace-nowrap transition-all border text-sm md:text-base flex-grow md:flex-grow-0 ${!selectedCategory
                             ? 'bg-sky-500 border-sky-500 text-white'
                             : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-sky-500'
                             }`}
@@ -100,7 +100,7 @@ const ProductsPage = () => {
                         <button
                             key={category.name}
                             onClick={() => handleCategorySelect(category.name)}
-                            className={`px-4 py-2 rounded-full whitespace-nowrap transition-all border ${selectedCategory === category.name
+                            className={`px-4 py-2 rounded-full whitespace-nowrap transition-all border text-sm md:text-base flex-grow md:flex-grow-0 ${selectedCategory === category.name
                                 ? 'bg-sky-500 border-sky-500 text-white'
                                 : 'bg-[var(--bg-secondary)] border-[var(--border-color)] text-[var(--text-secondary)] hover:border-sky-500'
                                 }`}
