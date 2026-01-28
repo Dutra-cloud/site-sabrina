@@ -52,7 +52,7 @@ export const DataProvider = ({ children }) => {
                         return { name: cat, image: 'https://placehold.co/300x300/202020/white?text=' + cat };
                     }
                     return cat;
-                });
+                }).sort((a, b) => a.name.localeCompare(b.name));
                 setCategories(normalizedCategories);
             } else {
                 // Inicializar categorias se não existirem
@@ -62,7 +62,7 @@ export const DataProvider = ({ children }) => {
                     { name: 'Acessórios', image: 'https://placehold.co/300x300/202020/white?text=Acessórios' },
                     { name: 'Mochilas', image: 'https://placehold.co/300x300/202020/white?text=Mochilas' },
                     { name: 'Artes', image: 'https://placehold.co/300x300/202020/white?text=Artes' }
-                ];
+                ].sort((a, b) => a.name.localeCompare(b.name));
                 const { error: insertError } = await supabase.from('settings').insert({ key: 'categories', value: { list: defaultCats } });
                 if (insertError) console.error('Error initializing categories:', insertError);
                 setCategories(defaultCats);
@@ -142,7 +142,7 @@ export const DataProvider = ({ children }) => {
         // categoryData expects { name, image }
         // Check if category name already exists
         if (!categories.some(c => c.name === categoryData.name)) {
-            const newCategories = [...categories, categoryData];
+            const newCategories = [...categories, categoryData].sort((a, b) => a.name.localeCompare(b.name));
             const { error } = await supabase.from('settings').upsert({ key: 'categories', value: { list: newCategories } });
             if (error) throw error;
             setCategories(newCategories);
