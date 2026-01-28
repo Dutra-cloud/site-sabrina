@@ -13,7 +13,7 @@ const Footer = () => {
                     <div>
                         <h3 className="text-xl font-bold mb-4 text-[var(--text-primary)] uppercase">Sabrina De Tudo um Pouco</h3>
                         <p className="text-[var(--text-secondary)] text-sm">
-                            Sua loja de material escolar favorita. Qualidade e preço justo.
+                            A sua loja para te atender onde estiver e com o que precisar, com somente um clique, e chegará rapidinho para você.
                         </p>
                     </div>
 
