@@ -14,21 +14,14 @@ const CartPage = () => {
         }
 
         const phoneNumber = '5516994322916'; // Número da loja
-        let message = `*Novo Pedido - Sabrina Acessórios*\n\n`;
-        message += `*Cliente:* ${customerName}\n\n`;
-        message += `*Itens do Pedido:*\n`;
+        let message = `Olá, gostaria de pedir o produto:\n\n`;
 
         cart.forEach(item => {
-            const price = Number(item.price) || 0;
-            if (price > 0) {
-                message += `- ${item.quantity}x ${item.name} (R$ ${price.toFixed(2)})\n`;
-            } else {
-                message += `- ${item.quantity}x ${item.name}\n`;
-            }
+            const productLink = `${window.location.origin}/produto/${item.id}`;
+            message += `- ${item.quantity}x ${item.name} (${productLink})\n`;
         });
 
-
-        message += `\n\nAguardo a confirmação do pedido!`;
+        message += `\nNome do Cliente: ${customerName}`;
 
         const encodedMessage = encodeURIComponent(message);
         window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
