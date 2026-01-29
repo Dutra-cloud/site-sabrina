@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +14,7 @@ const AdminDashboard = () => {
     const [editingProduct, setEditingProduct] = useState(null);
     const [newProduct, setNewProduct] = useState({ name: '', price: '', category: '', image: '', images: [], description: '', noPrice: false });
     const [productFiles, setProductFiles] = useState([]);
+    const fileInputRef = useRef(null);
 
     // Banner Form State
     const [bannerForm, setBannerForm] = useState(banner);
@@ -78,6 +79,9 @@ const AdminDashboard = () => {
                 setNewProduct({ name: '', price: '', category: '', image: '', images: [], description: '', noPrice: false });
             }
             setProductFiles([]);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
             alert('Produto salvo com sucesso!');
         } catch (err) {
             console.error(err);
@@ -208,6 +212,7 @@ const AdminDashboard = () => {
                                     <div className="space-y-2">
                                         <input
                                             type="file"
+                                            ref={fileInputRef}
                                             accept="image/*"
                                             multiple
                                             onChange={(e) => {
